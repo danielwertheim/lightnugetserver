@@ -1,0 +1,14 @@
+﻿{
+  "packagesDirPath": "Packages",
+  "feeds": [
+    {
+      "name": "Default",
+      "relativeUrl": "nuget",
+      "apiKey": "spsC0kqfMEOYFCjzRalwyQ==",
+      "requiresApiKey": true,
+      "nuGetServerSettings": {
+        "ignoreSymbolsPackages": true
+      }
+    }
+  ]
+}
