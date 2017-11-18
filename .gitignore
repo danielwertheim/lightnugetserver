@@ -1,0 +1,38 @@
+# vs
+.vs/
+[Aa]pp_[Dd]ata/
+[Bb]in/
+[D]ebug/
+[Aa]rtifacts/
+[Oo]bj/
+[Tt]est[Rr]esult/
+[Tt]emp/
+*.user
+*.vspscc
+*.vssscc
+*.suo
+*.cache
+
+# deploy
+build/
+tools/
+!tools/packages.config
+
+# misc
+*~
+*.swp
+*.sdf
+*.orig
+*.pfx
+
+# nuget
+[Pp]ackages/
+
+# resharper
+_ReSharper.*
+*.resharper*
+*.[Rr]e[Ss]harper.user
+*.DotSettings.user
+
+#windows stuff
+Thumbs.db
