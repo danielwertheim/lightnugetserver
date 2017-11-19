@@ -31,6 +31,16 @@ A sample configuring two different feeds. The name of the feed is used to produc
 }
 ```
 
+## Installing
+By default it's configured to use the `NETWORK SERVICE` account. In case you want to override things, [see switches](https://topshelf.readthedocs.io/en/latest/overview/commandline.html) for the `install` command.
+
+### Adding an UrlAcl
+In case needed, it would look something like this (**NOTE!** port should match what is in the `App.config`):
+
+```
+netsh http add urlacl url=http://+:5000/ user="NT AUTHORITY\NETWORK SERVICE"
+```
+
 ## Upload & Delete packages
 Against the configured "Default" feed which is secured by an API-key:
 
