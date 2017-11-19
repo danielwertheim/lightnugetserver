@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web.Http;
@@ -17,7 +16,7 @@ namespace LightNuGetServer
             this IAppBuilder app,
             HttpConfiguration config,
             LightNuGetServerSettings settings,
-            Action<IDictionary<string, LightNuGetFeed>> cfg = null)
+            Action<LightNuGetFeed[]> cfg = null)
         {
             Ensure.Any.IsNotNull(app, nameof(app));
             Ensure.Any.IsNotNull(config, nameof(config));
@@ -27,15 +26,15 @@ namespace LightNuGetServer
 
             var feeds = settings.Feeds
                 .Select(fs => new LightNuGetFeed(fs, NuGetV2WebApiEnabler.CreatePackageRepository(Path.Combine(settings.PackagesDirPath, fs.Name), fs, logger)))
-                .ToDictionary(f => f.Key);
+                .ToArray();
 
             cfg?.Invoke(feeds);
 
-            foreach (var feed in feeds.Values.Select(f => f.Settings))
+            foreach (var feed in feeds)
             {
                 config.UseNuGetV2WebApiFeed(
                     routeName: feed.Name,
-                    routeUrlRoot: feed.RelativeUrl,
+                    routeUrlRoot: feed.Slug,
                     oDatacontrollerName: "LightNuGetFeed");
             }
 

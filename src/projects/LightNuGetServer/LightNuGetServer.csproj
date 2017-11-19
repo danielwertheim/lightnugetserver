@@ -83,6 +83,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Controllers\LightNuGetFeedController.cs" />
+    <Compile Include="Internals\Slugger.cs" />
     <Compile Include="LightNuGetFeed.cs" />
     <Compile Include="LightNuGetFeedSettings.cs" />
     <Compile Include="LightNuGetServerActivator.cs" />

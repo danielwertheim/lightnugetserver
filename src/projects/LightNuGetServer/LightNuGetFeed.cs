@@ -1,11 +1,13 @@
 ﻿using EnsureThat;
+using LightNuGetServer.Internals;
 using NuGet.Server.Core.Infrastructure;
 
 namespace LightNuGetServer
 {
     public class LightNuGetFeed
     {
-        public string Key { get; }
+        public string Name => Settings.Name;
+        public string Slug { get; }
         public LightNuGetFeedSettings Settings { get; }
         public IServerPackageRepository Repository { get; }
 
@@ -14,7 +16,7 @@ namespace LightNuGetServer
             Ensure.Any.IsNotNull(settings, nameof(settings));
             Ensure.Any.IsNotNull(repository, nameof(repository));
 
-            Key = $"/{settings.RelativeUrl.Trim('/')}/";
+            Slug = settings.Name.Slugify();
             Settings = settings;
             Repository = repository;
         }

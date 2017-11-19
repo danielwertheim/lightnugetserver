@@ -7,6 +7,7 @@ using System.Web.Http.Controllers;
 using System.Web.Http.Dispatcher;
 using EnsureThat;
 using LightNuGetServer.Controllers;
+using LightNuGetServer.Internals;
 
 namespace LightNuGetServer
 {
@@ -15,18 +16,18 @@ namespace LightNuGetServer
         private static readonly Type NuGetFeedControllerType = typeof(LightNuGetFeedController);
 
         private readonly IHttpControllerActivator _defaultControllerActivator;
-        private readonly IReadOnlyDictionary<string, LightNuGetFeed> _feeds;
+        private readonly IReadOnlyDictionary<string, LightNuGetFeed> _feedsBySlug;
         private readonly LightNuGetFeed _singleFeed;
 
-        public LightNuGetFeedControllerActivator(IDictionary<string, LightNuGetFeed> feeds)
+        public LightNuGetFeedControllerActivator(LightNuGetFeed[] feeds)
         {
             Ensure.Collection.HasItems(feeds, nameof(feeds));
 
             _defaultControllerActivator = new DefaultHttpControllerActivator();
-            _feeds = new ReadOnlyDictionary<string, LightNuGetFeed>(feeds);
+            _feedsBySlug = new ReadOnlyDictionary<string, LightNuGetFeed>(feeds.ToDictionary(f => $"/{f.Name.Slugify()}/"));
 
-            if (_feeds.Count == 1)
-                _singleFeed = _feeds.Values.Single();
+            if (_feedsBySlug.Count == 1)
+                _singleFeed = _feedsBySlug.Values.Single();
         }
 
         public IHttpController Create(HttpRequestMessage request, HttpControllerDescriptor controllerDescriptor, Type controllerType)
@@ -48,10 +49,10 @@ namespace LightNuGetServer
             if (_singleFeed != null)
                 return _singleFeed;
 
-            if (_feeds.TryGetValue(request.RequestUri.AbsolutePath, out var feed))
+            if (_feedsBySlug.TryGetValue(request.RequestUri.AbsolutePath, out var feed))
                 return feed;
 
-            return _feeds.Values.FirstOrDefault(f => request.RequestUri.AbsolutePath.StartsWith(f.Key));
+            return _feedsBySlug.Values.FirstOrDefault(f => request.RequestUri.AbsolutePath.StartsWith(f.Slug));
         }
     }
 }

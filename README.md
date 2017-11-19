@@ -2,14 +2,14 @@
 Uses [Topshelf](https://github.com/topshelf/topshelf) and [NuGet.Server](https://github.com/NuGet/NuGet.Server) to provide a self-hosted NuGet Server with support for multiple configurable feeds.
 
 ## Sample settings
+A sample configuring two different feeds. The name of the feed is used to produce a URL friendly slug.
 
 ```json
 {
   "packagesDirPath": "Packages",
   "feeds": [
     {
-      "name": "Default",
-      "relativeUrl": "nuget",
+      "name": "Default", //produces URL "default"
       "apiKey": "foobar",
       "requiresApiKey": true,
       "nuGetServerSettings": {
@@ -21,8 +21,7 @@ Uses [Topshelf](https://github.com/topshelf/topshelf) and [NuGet.Server](https:/
       }
     },
     {
-      "name": "Public",
-      "relativeUrl": "nuget/public",
+      "name": "Some Weird Name", //produces URL "some-weird-name"
       "requiresApiKey": false,
       "nuGetServerSettings": {
         "ignoreSymbolsPackages": true
@@ -36,13 +35,13 @@ Uses [Topshelf](https://github.com/topshelf/topshelf) and [NuGet.Server](https:/
 Against the configured "Default" feed which is secured by an API-key:
 
 ```
-nuget push -source http://localhost:5000/nuget .\Topshelf.4.0.3.nupkg -apikey foobar
-nuget delete -source http://localhost:5000/nuget Topshelf 4.0.3 -apikey foobar
+nuget push .\Topshelf.4.0.3.nupkg -source http://localhost:5000/default -apikey foobar
+nuget delete Topshelf 4.0.3 -source http://localhost:5000/default -apikey foobar
 ```
 
 Against the configured "Public" feed which is not secured:
 
 ```
-nuget push -source http://localhost:5000/nuget/public .\Topshelf.4.0.3.nupkg
-nuget delete -source http://localhost:5000/nuget/public Topshelf 4.0.3 -apikey foobar
+nuget push .\Topshelf.4.0.3.nupkg -source http://localhost:5000/some-weird-name
+nuget delete Topshelf 4.0.3 -source http://localhost:5000/some-weird-name
 ```
