@@ -1,6 +1,6 @@
 public class BuildConfig
 {
-    private const string Version = "0.2.0";
+    private const string Version = "0.2.1";
 
     public readonly string SrcDir = "./src/";
     public readonly string OutDir = "./build/";    

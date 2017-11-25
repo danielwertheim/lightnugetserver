@@ -49,10 +49,12 @@ namespace LightNuGetServer
             if (_singleFeed != null)
                 return _singleFeed;
 
-            if (_feedsBySlug.TryGetValue(request.RequestUri.AbsolutePath, out var feed))
+            var path = $"/{request.RequestUri.LocalPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).First()}/";
+
+            if (_feedsBySlug.TryGetValue(path, out var feed))
                 return feed;
 
-            return _feedsBySlug.Values.FirstOrDefault(f => request.RequestUri.AbsolutePath.StartsWith(f.Slug));
+            return _feedsBySlug.Values.FirstOrDefault(f => path.StartsWith(f.Slug));
         }
     }
 }
