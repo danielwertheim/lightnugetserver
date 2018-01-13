@@ -1,16 +1,8 @@
 ﻿{
-  "packagesDirPath": "Packages",
+  "packagesDirPath": "./Packages",
   "feeds": [
     {
       "name": "Default",
-      "apiKey": "spsC0kqfMEOYFCjzRalwyQ==",
-      "requiresApiKey": true,
-      "nuGetServerSettings": {
-        "ignoreSymbolsPackages": true
-      }
-    },
-    {
-      "name": "Some Weird Name",
       "apiKey": "spsC0kqfMEOYFCjzRalwyQ==",
       "requiresApiKey": true,
       "nuGetServerSettings": {

@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ensure.That, Version=7.0.0.46, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Ensure.That.7.0.0\lib\net451\Ensure.That.dll</HintPath>
+    <Reference Include="Ensure.That, Version=7.2.0.67, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ensure.That.7.2.0\lib\net451\Ensure.That.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Data.Edm, Version=5.8.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Data.Edm.5.8.3\lib\net40\Microsoft.Data.Edm.dll</HintPath>
@@ -81,6 +81,9 @@
   <ItemGroup>
     <Compile Include="..\..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GlobalAssemblyVersion.cs">
+      <Link>Properties\GlobalAssemblyVersion.cs</Link>
     </Compile>
     <Compile Include="Controllers\LightNuGetFeedController.cs" />
     <Compile Include="Internals\Slugger.cs" />

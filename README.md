@@ -1,5 +1,5 @@
 # LightNuGetServer
-Uses [Topshelf](https://github.com/topshelf/topshelf) and [NuGet.Server](https://github.com/NuGet/NuGet.Server) to provide a self-hosted NuGet Server with support for multiple configurable feeds.
+Uses [NuGet.Server](https://github.com/NuGet/NuGet.Server) to provide a self-hosted NuGet Server with support for multiple configurable feeds.
 
 ## Sample settings
 A sample configuring two different feeds. The name of the feed is used to produce a URL friendly slug.
@@ -32,10 +32,14 @@ A sample configuring two different feeds. The name of the feed is used to produc
 ```
 
 ## Installing
-By default it's configured to use the `NETWORK SERVICE` account. In case you want to override things, [see switches](https://topshelf.readthedocs.io/en/latest/overview/commandline.html) for the `install` command.
+Since `v0.3.0` TopShelf is no longer used. To install as service you can use `sc.exe`, e.g.
+
+```
+sc create LightNuGetServer start= auto binPath= "C:\SomePath\LightNuGetServer.Host.exe" DisplayName= LightNuGetServer
+```
 
 ### Adding an UrlAcl
-In case needed, it would look something like this (**NOTE!** port should match what is in the `App.config`):
+In case you get an issue with not being able to start under the account you have assigned to use for your service, you might need to manually add an UrlAcl. This would look something like this (**NOTE!** port should match what is in the `App.config`):
 
 ```
 netsh http add urlacl url=http://+:5000/ user="NT AUTHORITY\NETWORK SERVICE"

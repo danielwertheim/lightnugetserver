@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Configuration;
-using System.Web.Http;
-using System.Web.Http.Dispatcher;
-using Microsoft.Owin.Hosting;
-using Owin;
+using System.IO;
+using System.ServiceProcess;
 using Serilog;
-using Topshelf;
 
 namespace LightNuGetServer.Host
 {
@@ -13,33 +10,35 @@ namespace LightNuGetServer.Host
     {
         static void Main(string[] args)
         {
-            var logConfig = new LoggerConfiguration()
-                .ReadFrom.AppSettings()
-                .Enrich.FromLogContext();
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
-            if (Environment.UserInteractive)
-                logConfig = logConfig.WriteTo.Console();
-
-            Log.Logger = logConfig.CreateLogger();
-
-            var serviceName = GetRequiredAppSetting("service:name");
-            var baseAddress = GetRequiredAppSetting("host:baseaddress");
-            var serverSettingsFilePath = GetRequiredAppSetting("lightnugetserver:settingsfilepath");
-
-            HostFactory.Run(x =>
+            try
             {
-                x.UseSerilog();
+                var logConfig = new LoggerConfiguration()
+                    .ReadFrom.AppSettings()
+                    .Enrich.FromLogContext();
 
-                x.SetServiceName(serviceName);
+                var logger = Log.Logger = logConfig.CreateLogger();
 
-                x.Service<LightNuGetService>(s =>
-                {
-                    s.ConstructUsing(name => new LightNuGetService());
-                    s.WhenStarted(tc => tc.Start(baseAddress, serverSettingsFilePath));
-                    s.WhenStopped(tc => tc.Stop());
-                });
-                x.RunAsNetworkService();
-            });
+                logger.Information("Running in Directory='{Directory}' using UserName='{UserName}'",
+                    Directory.GetCurrentDirectory(),
+                    System.Security.Principal.WindowsIdentity.GetCurrent().Name);
+
+                var host = new LightNuGetServerHostService(
+                    GetRequiredAppSetting("host:baseaddress"),
+                    GetRequiredAppSetting("lightnugetserver:settingsfilepath"));
+
+                if (Environment.UserInteractive)
+                    host.RunAsConsole(args);
+                else
+                    ServiceBase.Run(host);
+            }
+            finally
+            {
+                Log.Logger.Information("Exiting");
+
+                Log.CloseAndFlush();
+            }
         }
 
         private static string GetRequiredAppSetting(string key)
@@ -49,36 +48,6 @@ namespace LightNuGetServer.Host
                 throw new Exception($"AppSetting missing for key '{key}'.");
 
             return value;
-        }
-
-        private class LightNuGetService
-        {
-            private IDisposable _app;
-
-            public void Start(string baseAddress, string jsonSettingsFilePath)
-            {
-                if (_app != null)
-                    throw new InvalidOperationException("Service is already started.");
-
-                _app = WebApp.Start(baseAddress, app =>
-                {
-                    var settings = LightNugetServerSettingsJsonFactory.Create(jsonSettingsFilePath);
-                    var config = new HttpConfiguration();
-
-                    app.UseLightNuGetServer(config, settings, feeds =>
-                    {
-                        config.Services.Replace(typeof(IHttpControllerActivator), new LightNuGetFeedControllerActivator(feeds));
-                    });
-
-                    app.UseWebApi(config);
-                });
-            }
-
-            public void Stop()
-            {
-                _app?.Dispose();
-                _app = null;
-            }
         }
     }
 }
